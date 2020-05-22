@@ -4,32 +4,28 @@ YT.query = {
             return;
         }
         YT.live.stop();
-        $.getJSON("https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=" + encodeURIComponent(e) + "&key=" + YT.keyManager.getKey(), function (e) {
-            if (e.pageInfo.totalResults < 1) {
+        $.getJSON("https://counts.live/api/youtube/" + encodeURIComponent(e) + "/data", function (e) {
+            if (!e.success) {
                 alert("No results found!");
+                location.href = baseURL;
                 return;
             }
-            var gsnippet = e.items[0];
-            YT.updateManager.updateChannel(gsnippet.id, gsnippet.snippet.publishedAt);
-            YT.live.start();
+            YT.updateManager.updateChannel(e.data.id, e.data.created);
+            YT.updateManager.updateCover(e.data.backdrop);
 
-            YT.query.getCover(gsnippet.id);
-
-            YT.updateManager.updateName(gsnippet.snippet.title);
-            YT.updateManager.updateProfile(gsnippet.snippet.thumbnails.high.url ? gsnippet.snippet.thumbnails.high.url : gsnippet.snippet.thumbnails.default.url);
-            var dt = new Date(gsnippet.snippet.publishedAt);
+            YT.updateManager.updateName(e.data.name);
+            YT.updateManager.updateProfile(e.data.picture);
+            var dt = new Date(e.data.created);
             YT.updateManager.updateDate(months[dt.getMonth()] + " " + dt.getDate() + ", " + dt.getFullYear());
 
-            YT.updateManager.updateViews(parseInt(gsnippet.statistics.viewCount).toLocaleString("en"));
-            YT.updateManager.updateSubscribers(parseInt(gsnippet.statistics.subscriberCount).toLocaleString("en"));
-            YT.updateManager.updateVideos(parseInt(gsnippet.statistics.videoCount).toLocaleString("en"));
+            $.getJSON("https://counts.live/api/youtube/" + encodeURIComponent(e.data.id) + "/live", function (e) {
+                YT.updateManager.updateViews(parseInt(e.data.views).toLocaleString("en"));
+                YT.updateManager.updateSubscribers(parseInt(e.data.subscribers).toLocaleString("en"));
+                YT.updateManager.updateVideos(parseInt(e.data.videos).toLocaleString("en"));
+            });
 
-            YT.urls.pushState(gsnippet.id);
-        });
-    },
-    getCover: function (e) {
-        $.getJSON("https://www.googleapis.com/youtube/v3/channels?part=brandingSettings&id=" + encodeURIComponent(e) + "&key=" + YT.keyManager.getKey(), function (e) {
-            YT.updateManager.updateCover(e.items[0].brandingSettings.image.bannerImageUrl);
+            YT.urls.pushState(e.data.id);
+            YT.live.start();
         });
     },
     search: function (e) {

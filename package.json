@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Chronological YouTube Video Calander — YouTube Archive",
   "scripts": {
-    "start": "http-server --ssl --cert _internal\\ssl.cert --key _internal\\ssl.key -a local.akshatmittal.com"
+    "start": "http-server --ssl --cert _internal\\ssl.cert --key _internal\\ssl.key -a akshatmittal.com -p 443"
   },
   "repository": {
     "type": "git",
