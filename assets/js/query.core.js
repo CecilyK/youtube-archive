@@ -4,7 +4,7 @@ YT.query = {
             return;
         }
         YT.live.stop();
-        $.getJSON("https://counts.live/api/youtube/" + encodeURIComponent(e) + "/data", function (e) {
+        $.getJSON("https://counts.live/api/youtube-subscriber-count/" + encodeURIComponent(e) + "/data", function (e) {
             if (!e.success) {
                 alert("No results found!");
                 location.href = baseURL;
@@ -18,7 +18,7 @@ YT.query = {
             var dt = new Date(e.data.created);
             YT.updateManager.updateDate(months[dt.getMonth()] + " " + dt.getDate() + ", " + dt.getFullYear());
 
-            $.getJSON("https://counts.live/api/youtube/" + encodeURIComponent(e.data.id) + "/live", function (e) {
+            $.getJSON("https://counts.live/api/youtube-subscriber-count/" + encodeURIComponent(e.data.id) + "/live", function (e) {
                 YT.updateManager.updateViews(parseInt(e.data.views).toLocaleString("en"));
                 YT.updateManager.updateSubscribers(parseInt(e.data.subscribers).toLocaleString("en"));
                 YT.updateManager.updateVideos(parseInt(e.data.videos).toLocaleString("en"));
